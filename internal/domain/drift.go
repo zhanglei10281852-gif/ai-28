@@ -56,14 +56,6 @@ func (s DriftIncidentStatus) IsOpen() bool {
 	return s == DriftIncidentOpen || s == DriftIncidentReviewing
 }
 
-func (r QualityObservation) AggregationSample() QualityObservation {
-	sample := r
-	if !sample.ReceivedAt.IsZero() {
-		sample.RecordedAt = sample.ReceivedAt
-	}
-	return sample
-}
-
 func (r QualityObservation) Validate() error {
 	if strings.TrimSpace(r.InferenceRunID) == "" || strings.TrimSpace(r.MetricKey) == "" {
 		return FieldError{Field: "observation", Message: "run and metric key are required"}
