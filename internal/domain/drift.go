@@ -56,12 +56,14 @@ func (s DriftIncidentStatus) IsOpen() bool {
 	return s == DriftIncidentOpen || s == DriftIncidentReviewing
 }
 
+// AggregationSample returns the observation as the drift incident should
+// aggregate it. The incident window is anchored to the telemetry event time
+// (RecordedAt), not to the moment the record reached the service
+// (ReceivedAt): a delayed observation must still bound the window by when it
+// was recorded, otherwise two records recorded 45 minutes apart but ingested
+// seconds apart collapse into a window spanning only the ingestion minutes.
 func (r QualityObservation) AggregationSample() QualityObservation {
-	sample := r
-	if !sample.ReceivedAt.IsZero() {
-		sample.RecordedAt = sample.ReceivedAt
-	}
-	return sample
+	return r
 }
 
 func (r QualityObservation) Validate() error {
